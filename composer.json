@@ -1,0 +1,17 @@
+{
+    "name": "fugikzl/container",
+    "description": "Simple DI container",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Fugikzl\\Container\\": "src/"
+        }
+    },
+    "require": {
+        "psr/container": "^2.0"
+    },
+    "require-dev": {
+        "vimeo/psalm": "^6.13"
+    }
+}
