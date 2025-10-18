@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fugikzl\Container;
 
+use Fugikzl\Container\Internal\DefinitionInterface;
 use Fugikzl\Container\Internal\Exception\UnableToResolveException;
 use Fugikzl\Container\Internal\FactoryInterface;
 use Override;
@@ -22,7 +23,7 @@ final class ReflectionFactory implements FactoryInterface
         }
         /** @var string $requestedName */
 
-        if ($this->canCreate($requestedName) === false) {
+        if (self::canCreate($requestedName) === false) {
             $this->throwException($requestedName);
         }
 
@@ -47,7 +48,7 @@ final class ReflectionFactory implements FactoryInterface
         return new $requestedName(...$args);
     }
 
-    private function resolveParameter(ReflectionParameter $parameter, ContainerInterface $container, $requestedName)
+    private function resolveParameter(ReflectionParameter $parameter, ContainerInterface $container, string $requestedName)
     {
         $type = $parameter->getType();
         $type = $type instanceof ReflectionNamedType ? $type->getName() : null;
@@ -64,17 +65,11 @@ final class ReflectionFactory implements FactoryInterface
             return $parameter->getDefaultValue();
         }
 
-        $type = $this->aliases[$type] ?? $type;
-
-        if ($container->has($type)) {
-            return $container->get($type);
+        if ($parameter->isOptional()) {
+            return $parameter->getDefaultValue();
         }
 
-        if (! $parameter->isOptional()) {
-            $this->throwException($requestedName);
-        }
-
-        return $parameter->getDefaultValue();
+        return $container->get($type);
     }
 
 
@@ -83,12 +78,12 @@ final class ReflectionFactory implements FactoryInterface
         throw new UnableToResolveException($requestedName, $details);
     }
 
-    private function canCreate($requestedName)
+    public static function canCreate($requestedName)
     {
-        return \class_exists($requestedName) && $this->canCallConstructor($requestedName);
+        return \class_exists($requestedName) && self::canCallConstructor($requestedName);
     }
 
-    private function canCallConstructor(string $requestedName): bool
+    private static function canCallConstructor(string $requestedName): bool
     {
         $constructor = (new ReflectionClass($requestedName))->getConstructor();
 

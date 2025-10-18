@@ -16,10 +16,13 @@ use Psr\Container\ContainerInterface;
 class Container implements ContainerInterface
 {
     /**
-     * @var DefinitionInterface[]
+     * @var array<string, DefinitionInterface>
      */
     protected $definitions = [];
 
+    /**
+     * @var array<string, bool>
+     */
     protected $singletones = [];
 
     public function __construct(
@@ -74,16 +77,15 @@ class Container implements ContainerInterface
     {
         $hasInDefinitions = $this->hasInDefinitions($id);
 
+        if ($hasInDefinitions) {
+            return $hasInDefinitions;
+        }
+
         if ($this->reflcetionAutowiring === false) {
             return $hasInDefinitions;
         }
 
-        try {
-            $this->get($id);
-            return true;
-        } catch (\Psr\Container\ContainerExceptionInterface $ce) {
-            return false;
-        }
+        return (new ReflectionFactory())::canCreate($id);
     }
 
     private function hasInDefinitions(string $id): bool
