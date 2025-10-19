@@ -5,7 +5,6 @@
 A lightweight and simple PHP Dependency Injection (DI) container designed to help you manage your application's dependencies efficiently. This project is ideal for developers looking for a straightforward and easy-to-use DI container without the overhead of more complex solutions.
 
 ## ✨ Features
-- 🔒 **Secure**: Built with security in mind, ensuring that your dependencies are resolved safely.
 - 🌐 **Flexible**: Supports various types of definitions, including concrete, alias, and factory definitions.
 - 🔄 **Reflection Autowiring**: Automatically resolves dependencies using reflection.
 - 📦 **Lightweight**: Minimalistic design with a small footprint.
